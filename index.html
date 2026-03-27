@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ob-Havo - Zamonaviy Qurilma</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="weather-app" id="weatherApp">
+        <div class="weather-card">
+            <div class="search-box">
+                <input type="text" id="cityInput" placeholder="Shahar nomini kiriting...">
+                <button id="searchBtn">Qidirish</button>
+            </div>
+            
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Ma'lumotlar yuklanmoqda...</p>
+            </div>
+            
+            <div id="error" class="error hidden">
+                <p id="errorMessage"></p>
+            </div>
+            
+            <div id="weatherInfo" class="weather-info hidden">
+                <div class="date-time">
+                    <p id="currentDate"></p>
+                    <p id="currentTime"></p>
+                </div>
+                
+                <h2 id="cityName"></h2>
+                
+                <div class="weather-icon">
+                    <img id="weatherIcon" src="" alt="Ob-havo ikonkasi">
+                </div>
+                
+                <div class="temperature">
+                    <span id="temp"></span>
+                    <span class="celsius">°C</span>
+                </div>
+                
+                <p id="weatherDesc" class="weather-desc"></p>
+                
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Namlik</span>
+                        <span id="humidity" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Shamol</span>
+                        <span id="wind" class="detail-value"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
