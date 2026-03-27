@@ -1,5 +1,4 @@
-const API_KEY = 'YOUR_API_KEY_HERE';
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const BASE_URL = 'https://wttr.in';
 
 const cityInput = document.getElementById('cityInput');
 const searchBtn = document.getElementById('searchBtn');
@@ -27,17 +26,6 @@ function updateDateTime() {
     currentTime.textContent = now.toLocaleTimeString('uz-UZ', timeOptions);
 }
 
-function getWeatherIcon(weatherId) {
-    if (weatherId >= 200 && weatherId < 300) return '🌩️';
-    if (weatherId >= 300 && weatherId < 400) return '🌧️';
-    if (weatherId >= 500 && weatherId < 600) return '🌧️';
-    if (weatherId >= 600 && weatherId < 700) return '❄️';
-    if (weatherId >= 700 && weatherId < 800) return '🌫️';
-    if (weatherId === 800) return '☀️';
-    if (weatherId > 800) return '☁️';
-    return '☀️';
-}
-
 function updateBackground(weatherId) {
     const body = document.body;
     body.className = '';
@@ -61,24 +49,13 @@ async function getWeather(city) {
         return;
     }
 
-    if (API_KEY === 'YOUR_API_KEY_HERE') {
-        showError('API kalit sozlanmagan! script.js fayliga o\'zingizning OpenWeatherMap API kalitini qo\'shing.');
-        return;
-    }
-
     showLoading();
 
     try {
-        const response = await fetch(`${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric&lang=uz`);
+        const response = await fetch(`${BASE_URL}/${city}?format=j1`);
         
         if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error('Shahar topilmadi. Iltimos, to\'g\'ri shahar nomini kiriting.');
-            } else if (response.status === 401) {
-                throw new Error('API kalit noto\'g\'ri. Iltimos, API kalitni tekshiring.');
-            } else {
-                throw new Error('Xatolik yuz berdi. Qayta urinib ko\'ring.');
-            }
+            throw new Error('Shahar topilmadi. Iltimos, to\'g\'ri shahar nomini kiriting.');
         }
 
         const data = await response.json();
@@ -89,16 +66,24 @@ async function getWeather(city) {
 }
 
 function displayWeather(data) {
-    cityName.textContent = data.name + ', ' + data.sys.country;
-    temp.textContent = Math.round(data.main.temp);
-    weatherDesc.textContent = data.weather[0].description;
-    humidity.textContent = data.main.humidity + '%';
-    wind.textContent = data.wind.speed + ' m/s';
+    const current = data.current_condition[0];
+    
+    cityName.textContent = data.nearest_area[0].areaName[0].value + ', ' + data.nearest_area[0].country[0].value;
+    temp.textContent = Math.round(parseFloat(current.temp_C));
+    weatherDesc.textContent = current.weatherDesc[0].value;
+    humidity.textContent = current.humidity + '%';
+    wind.textContent = current.windspeedKmph + ' km/h';
 
-    const weatherId = data.weather[0].id;
-    const iconCode = data.weather[0].icon;
-    weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
-    weatherIcon.alt = data.weather[0].description;
+    const weatherDescLower = current.weatherDesc[0].value.toLowerCase();
+    let weatherId;
+    if (weatherDescLower.includes('rain') || weatherDescLower.includes('drizzle')) weatherId = 500;
+    else if (weatherDescLower.includes('snow')) weatherId = 600;
+    else if (weatherDescLower.includes('cloud') || weatherDescLower.includes('overcast')) weatherId = 801;
+    else if (weatherDescLower.includes('sun') || weatherDescLower.includes('clear')) weatherId = 800;
+    else weatherId = 800;
+
+    weatherIcon.src = `https://wttr.in/${cityInput.value}_2.png`;
+    weatherIcon.alt = current.weatherDesc[0].value;
 
     updateBackground(weatherId);
     updateDateTime();
